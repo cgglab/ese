@@ -4,7 +4,7 @@
 #include <conio.h>
 
 // Function for Bresenham's Circle Drawing Algorithm
-void bresanhamCircle(int xc, int yc, int r){
+void bresenhamCircle(int xc, int yc, int r){
 
     int x = 0;
     int y = r;
@@ -84,9 +84,9 @@ int main() {
     scanf("%d", &choice);
 
     if (choice == 1) {
-        drawCircleBresenham(xc, yc, r);
+        bresenhamCircle(xc, yc, r);
     } else if (choice == 2) {
-        drawCircleMidpoint(xc, yc, r);
+        midCircle(xc, yc, r);
     } else {
         printf("Invalid choice!\n");
     }
