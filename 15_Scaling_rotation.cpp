@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include <graphics.h>
 #include <conio.h>
 #include <stdio.h>
@@ -234,5 +233,4 @@ int main() {
     getch();
     closegraph();
     return 0;
->>>>>>> b25d0d0 (repo updated)
 }
