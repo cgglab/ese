@@ -3,68 +3,65 @@
 #include <math.h>
 #include <conio.h>
 
-// Define TRUE and FALSE for older compilers if 'true' and 'false' are undefined
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-// Helper function to draw 8 symmetric points of a circle
-void draw8SymmetricPoints(int xc, int yc, int x, int y) {
-    putpixel(xc + x, yc + y, WHITE);
-    putpixel(xc - x, yc + y, WHITE);
-    putpixel(xc + x, yc - y, WHITE);
-    putpixel(xc - x, yc - y, WHITE);
-    putpixel(xc + y, yc + x, WHITE);
-    putpixel(xc - y, yc + x, WHITE);
-    putpixel(xc + y, yc - x, WHITE);
-    putpixel(xc - y, yc - x, WHITE);
-}
-
 // Function for Bresenham's Circle Drawing Algorithm
-void drawCircleBresenham(int xc, int yc, int r) {
+void bresanhamCircle(int xc, int yc, int r){
+
     int x = 0;
     int y = r;
-    int d = 3 - (2 * r); // Initial decision parameter
 
-    // Draw the initial 8 symmetric points
-    draw8SymmetricPoints(xc, yc, x, y);
+    int s = 3 - (2*r);
 
-    while (x <= y) {
-        if (d < 0) { // Midpoint is inside the circle (choose E)
-            d = d + (4 * x) + 6;
-        } else { // Midpoint is outside or on the circle (choose SE)
-            d = d + (4 * (x - y)) + 10;
-            y--; // Decrement y
+    do{
+        putpixel(xc + x, yc + y, WHITE);
+        putpixel(xc + x, yc - y, WHITE);
+        putpixel(xc - x, yc - y, WHITE);
+        putpixel(xc - x, yc + y, WHITE);
+        putpixel(xc + y, yc + x, WHITE);
+        putpixel(xc + y, yc - x, WHITE);
+        putpixel(xc - y, yc - x, WHITE);
+        putpixel(xc - y, yc + x, WHITE);
+
+        if (s <= 0) {
+            s += (4*x) + 6;
         }
-        x++; // Always increment x
+        else
+        {
+            s += (4*x) - (4*y) + 10;
+            y--;
+        }
+        x++;
+    }while(x <= y);
 
-        draw8SymmetricPoints(xc, yc, x, y);
-    }
 }
 
 // Function for Midpoint Circle Drawing Algorithm
-void drawCircleMidpoint(int xc, int yc, int r) {
+void midCircle(int xc, int yc, int r){
+
     int x = 0;
     int y = r;
-    int p = 1 - r; // Initial decision parameter
 
-    // Draw the initial 8 symmetric points
-    draw8SymmetricPoints(xc, yc, x, y);
+    int p = 1 - r;
 
-    while (x <= y) {
-        x++; // Always increment x
-        if (p < 0) { // Midpoint is inside the circle (choose E)
-            p = p + (2 * x) + 1;
-        } else { // Midpoint is outside or on the circle (choose SE)
-            y--; // Decrement y
-            p = p + (2 * x) + 1 - (2 * y);
+    do{
+        putpixel(xc + x, yc + y, WHITE);
+        putpixel(xc + x, yc - y, WHITE);
+        putpixel(xc - x, yc - y, WHITE);
+        putpixel(xc - x, yc + y, WHITE);
+        putpixel(xc + y, yc + x, WHITE);
+        putpixel(xc + y, yc - x, WHITE);
+        putpixel(xc - y, yc - x, WHITE);
+        putpixel(xc - y, yc + x, WHITE);
+
+        if (p <= 0){
+            p += (2*x) + 3;
         }
-        draw8SymmetricPoints(xc, yc, x, y);
-    }
+        else
+        {
+            p += (2*x) - (2*y) + 5;
+            y--;
+        }
+        x++;
+    }while(x <= y);
 }
 
 int main() {
