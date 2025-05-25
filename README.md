@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Computer Graphics Programs
 
 ## Line Drawing Algorithms
@@ -74,5 +73,4 @@
 
 ## Animation
 24. Animation using Mid-point/Bresenham Circle and DDA/Bresenham Line Drawing Algorithms 
->>>>>>> b25d0d0 (repo updated)
 ![Animations](animations.png)
