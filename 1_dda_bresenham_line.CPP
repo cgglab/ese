@@ -2,54 +2,91 @@
 #include <graphics.h>
 #include <math.h>
 #include <conio.h>
-#include <stdlib.h> // Required for abs() in C
-
-// Define TRUE and FALSE for C (since true/false keywords are C++ specific)
-#define TRUE 1
-#define FALSE 0
+#include <stdlib.h>
 
 void drawLineDDA(int x1, int y1, int x2, int y2) {
-    float dx = x2 - x1;
-    float dy = y2 - y1;
-    float s = fabs(dx) > fabs(dy) ? fabs(dx) : fabs(dy);
-    float xInc = dx / s;
-    float yInc = dy / s;
+    int dx = x2 - x1;
+    int dy = y2 - y1;
 
     float x = x1;
     float y = y1;
-    
-    int i;
-    for (i = 0; i <= s; i++) {
-        putpixel((int)(x + 0.5), (int)(y + 0.5), WHITE);
-        x += xInc;
-        y += yInc;
+
+    int sx = (x2 >= x1) ? 1 : -1;
+    int sy = (y2 >= y1) ? 1 : -1;
+
+    float m = (float)dy / dx;
+
+    if (dx >= dy)
+    {
+        do
+        {
+            putpixel(round(x), round(y), WHITE);
+            x += sx;
+            y += m;
+        } while (x <= x2);
+    }
+    else
+    {
+        do
+        {
+            putpixel(round(x), round(y), WHITE);
+            y += sy;
+            x += 1 / m;
+        } while (y <= y2);
     }
 }
 
 void drawLineBresenham(int x1, int y1, int x2, int y2) {
     int dx = abs(x2 - x1);
     int dy = abs(y2 - y1);
+
     int x = x1;
     int y = y1;
 
-    int sx = (x1 < x2) ? 1 : -1;
-    int sy = (y1 < y2) ? 1 : -1;
+    int sx = (x2 >= x1) ? 1 : -1;
+    int sy = (y2 >= y1) ? 1 : -1;
 
-    int err = dx - dy;
+    putpixel(x, y, WHITE);
 
-    while (TRUE) {
-        putpixel(x, y, WHITE);
-        if (x == x2 && y == y2) break;
-
-        int e2 = 2 * err;
-        if (e2 > -dy) {
-            err -= dy;
+    if (dx >= dy)
+    {
+        int g = (2 * dy) - dx;
+        do
+        {
             x += sx;
-        }
-        if (e2 < dx) {
-            err += dx;
+
+            if (g >= 0)
+            {
+                y += sy;
+                g += (2 * dy) - (2 * dx);
+            }
+            else
+            {
+                g += 2 * dy;
+            }
+
+            putpixel(x, y, WHITE);
+        } while (x != x2);
+    }
+    else
+    {
+        int g = (2 * dx) - dy;
+        do
+        {
             y += sy;
-        }
+
+            if (g >= 0)
+            {
+                x += sx;
+                g += (2 * dx) - (2 * dy);
+            }
+            else
+            {
+                g += 2 * dx;
+            }
+
+            putpixel(x, y, WHITE);
+        } while (y != y2);
     }
 }
 
@@ -57,8 +94,6 @@ int main() {
     int gd = DETECT, gm;
     int x1, y1, x2, y2, choice;
     initgraph(&gd, &gm, "C:\\TURBOC3\\BGI"); // ** IMPORTANT: Change this path to your BGI directory **
-
-
 
     printf("Enter the starting point (x1 y1): ");
     scanf("%d %d", &x1, &y1);
