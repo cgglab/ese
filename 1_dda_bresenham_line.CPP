@@ -4,6 +4,10 @@
 #include <conio.h>
 #include <stdlib.h>
 
+double round(double number) {
+    return (number >= 0) ? floor(number + 0.5) : ceil(number - 0.5);
+}
+
 void drawLineDDA(int x1, int y1, int x2, int y2) {
     int dx = x2 - x1;
     int dy = y2 - y1;
