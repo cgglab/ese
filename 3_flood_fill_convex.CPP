@@ -1,8 +1,9 @@
 #include <graphics.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
 
-#define MAX_STACK 100000
+#define MAX_STACK 10000
 
 // Structure for stack elements
 typedef struct {
