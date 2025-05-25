@@ -1,77 +1,92 @@
 #include <graphics.h>
-#include <conio.h>
 #include <stdio.h>
-#include <dos.h>
+#include <stdlib.h>
 
-void scanlineFill(int x, int y, int fillColor, int boundaryColor) {
-    int currentX, leftX, rightX;
-    int currentColor;
+#define MAX_STACK 100000
 
-    do {
-        currentColor = getpixel(x, y);
-        if (currentColor != boundaryColor && currentColor != fillColor) {
-            // Move to the leftmost pixel in this scanline
-            leftX = x;
-            while (getpixel(leftX - 1, y) != boundaryColor && getpixel(leftX - 1, y) != fillColor) {
-                leftX--;
-            }
+// Structure for stack elements
+typedef struct {
+    int x, y;
+} Point;
 
-            // Move to the rightmost pixel in this scanline
-            rightX = x;
-            while (getpixel(rightX + 1, y) != boundaryColor && getpixel(rightX + 1, y) != fillColor) {
-                rightX++;
-            }
+// Stack implementation
+Point stack[MAX_STACK];
+int top = -1;
 
-            // Fill the scanline
-            for (currentX = leftX; currentX <= rightX; currentX++) {
-                putpixel(currentX, y, fillColor);
-                delay(0); // Adjust delay if needed
-            }
-
-            // Check the scanlines above and below
-            for (currentX = leftX; currentX <= rightX; currentX++) {
-                if (getpixel(currentX, y - 1) != boundaryColor && getpixel(currentX, y - 1) != fillColor) {
-                    scanlineFill(currentX, y - 1, fillColor, boundaryColor);
-                }
-                if (getpixel(currentX, y + 1) != boundaryColor && getpixel(currentX, y + 1) != fillColor) {
-                    scanlineFill(currentX, y + 1, fillColor, boundaryColor);
-                }
-            }
-        }
-    } while (0);
+void push(int x, int y) {
+    if (top < MAX_STACK - 1) {
+        top++;
+        stack[top].x = x;
+        stack[top].y = y;
+    }
 }
 
-void main() {
+Point pop() {
+    Point p = {-1, -1};
+    if (top >= 0) {
+        p = stack[top];
+        top--;
+    }
+    return p;
+}
+
+int isEmpty() {
+    return top == -1;
+}
+
+// Non-recursive flood fill function
+void floodFill(int x, int y, int oldColor, int newColor) {
+    push(x, y);
+
+    while (!isEmpty()) {
+        Point p = pop();
+        int px = p.x;
+        int py = p.y;
+
+        if (getpixel(px, py) == oldColor) {
+            putpixel(px, py, newColor);
+
+            // Push neighboring pixels
+            push(px + 1, py);
+            push(px - 1, py);
+            push(px, py + 1);
+            push(px, py - 1);
+        }
+    }
+}
+
+int main() {
     int gd = DETECT, gm;
-    int n, i, x[20], y[20], poly[40];
-    int seedX, seedY, fillColor, boundaryColor = 15;
+    int n, i;
+    int x[20], y[20];
 
     initgraph(&gd, &gm, "C:\\Turboc3\\BGI");
 
-    printf("Enter number of vertices of the convex polygon (max 20): ");
+    printf("Enter number of vertices of the convex polygon: ");
     scanf("%d", &n);
 
-    printf("Enter coordinates of vertices (x y):\n");
+    // Accept vertices
     for (i = 0; i < n; i++) {
-        printf("Vertex %d: ", i + 1);
-        scanf("%d%d", &x[i], &y[i]);
-        poly[2 * i] = x[i];
-        poly[2 * i + 1] = y[i];
+        printf("Enter coordinates of vertex %d (x y): ", i + 1);
+        scanf("%d %d", &x[i], &y[i]);
     }
-    poly[2 * n] = x[0];     // Close the polygon
-    poly[2 * n + 1] = y[0];
 
-    setcolor(boundaryColor);
-    drawpoly(n + 1, poly);
+    // Draw polygon
+    for (i = 0; i < n - 1; i++) {
+        line(x[i], y[i], x[i + 1], y[i + 1]);
+    }
+    line(x[n - 1], y[n - 1], x[0], y[0]);
 
+    int seedX, seedY;
     printf("Enter seed point inside the polygon (x y): ");
-    scanf("%d%d", &seedX, &seedY);
+    scanf("%d %d", &seedX, &seedY);
 
-    printf("Enter fill color (1-14): ");
-    scanf("%d", &fillColor);
+    int oldColor = getpixel(seedX, seedY);
+    int newColor = 4; // Red
 
-    scanlineFill(seedX, seedY, fillColor, boundaryColor);
+    floodFill(seedX, seedY, oldColor, newColor);
 
     getch();
     closegraph();
+    return 0;
 }
